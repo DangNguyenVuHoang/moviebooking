@@ -5,14 +5,15 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
+import { RolesGuard } from './guards/roles.guard';
 
 const jwtSecret = process.env.JWT_SECRET || 'super_secret';
 const expiresInRaw = process.env.JWT_EXPIRES_IN || '1d';
 
-// Nếu là số -> number
-// Nếu là chuỗi -> cast sang StringValue (vd: '1d', '2h', '30m', '10s')
 const expiresIn: number | StringValue =
-  /^\d+$/.test(expiresInRaw) ? Number(expiresInRaw) : (expiresInRaw as StringValue);
+  /^\d+$/.test(expiresInRaw)
+    ? Number(expiresInRaw)
+    : (expiresInRaw as StringValue);
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ const expiresIn: number | StringValue =
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, RolesGuard],
+  exports: [RolesGuard],
 })
 export class AuthModule {}
